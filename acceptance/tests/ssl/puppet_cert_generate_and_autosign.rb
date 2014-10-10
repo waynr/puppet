@@ -50,8 +50,12 @@ test_name "Puppet cert generate behavior (#6112)" do
 
   teardown do
     step "And try to leave with a good ssl configuration"
-    reset_agent_ssl
-    clean_cert(master, test_cn, false)
+    if master[:is_puppetserver]
+      puppetserver_initialize_ssl
+    else
+      reset_agent_ssl
+      clean_cert(master, test_cn, false)
+    end
   end
 
   def generate_and_clean_cert(host, cn, autosign)

@@ -8,7 +8,12 @@ initialize_temp_dirs
 test_name "certificate extensions available as trusted data" do
 
   teardown do
-    reset_agent_ssl
+    step "Cleanup the test agent certs"
+    if master[:is_puppetserver]
+      puppetserver_initialize_ssl
+    else
+      reset_agent_ssl
+    end
   end
 
   hostname = master.execute('facter hostname')

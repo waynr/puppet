@@ -14,10 +14,14 @@ test_name "autosign command and csr attributes behavior (#7243,#7244)" do
 
   teardown do
     step "Remove autosign configuration"
-    testdirs.each do |host,testdir|
-      on(host, host_command("rm -rf '#{testdir}'") )
+    if master[:is_puppetserver]
+      puppetserver_initialize_ssl
+    else
+      testdirs.each do |host,testdir|
+        on(host, host_command("rm -rf '#{testdir}'") )
+      end
+      reset_agent_ssl
     end
-    reset_agent_ssl
   end
 
   hostname = master.execute('facter hostname')
